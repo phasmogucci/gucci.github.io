@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phasmo Casino</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Creepster', cursive;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Creepster&display=swap');
+
+        h1 {
+            font-size: 80px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8), 0 0 15px #ff0000;
+            color: #ff1e1e;
+            letter-spacing: 10px;
+        }
+
+        .buttons-container {
+            display: none;
+            justify-content: center;
+            gap: 20px;
+            transform: translateY(50px);
+        }
+
+        .house-button {
+            width: 100px;
+            height: 120px;
+            background: linear-gradient(135deg, #444 25%, #888);
+            border: 3px solid #fff;
+            clip-path: polygon(50% 0%, 0% 40%, 0% 100%, 100% 100%, 100% 40%);
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+            box-shadow: 0px 0px 15px rgba(255, 0, 0, 0.8), inset 0px 0px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .house-button:hover {
+            transform: translateY(-10px) rotateY(15deg);
+            background-color: #ff0000;
+        }
+
+        .result-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .result {
+            font-size: 24px;
+            margin: 5px;
+        }
+
+        /* Verschiedene Farben für die Gewinne */
+        .result-0 { color: #ff1e1e; }
+        .result-1 { color: #00ff00; }
+        .result-2 { color: #1e90ff; }
+        .result-3 { color: #ffff00; }
+        .result-4 { color: #ff69b4; }
+
+        /* Style für das Login */
+        .login-container {
+            background: rgba(20, 20, 20, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(255, 0, 0, 0.8), inset 0px 0px 10px rgba(0, 0, 0, 0.8);
+            transform: rotateX(15deg);
+            text-align: center;
+        }
+
+        .login-container input {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            width: 80%;
+            background-color: #222;
+            color: #fff;
+            font-size: 16px;
+            box-shadow: 0px 0px 8px rgba(255, 0, 0, 0.5);
+        }
+
+        .login-container button {
+            padding: 10px 20px;
+            background-color: #ff0000;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-container button:hover {
+            background-color: #cc0000;
+        }
+
+        .success-message {
+            display: none;
+            margin-top: 20px;
+            font-size: 24px;
+            color: #00ff00;
+            transform: rotateX(0deg) translateZ(50px);
+        }
+
+        .show-success {
+            display: block;
+            animation: success-animation 2s forwards;
+        }
+
+        @keyframes success-animation {
+            0% { transform: rotateX(90deg) translateZ(-200px); opacity: 0; }
+            100% { transform: rotateX(0deg) translateZ(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h1>Casino</h1>
+
+    <!-- Anmeldebereich -->
+    <div class="login-container" id="login-container">
+        <h2>Anmeldung</h2>
+        <input type="text" id="username" placeholder="Benutzername" />
+        <input type="password" id="password" placeholder="Passwort" />
+        <button onclick="login()">Anmelden</button>
+        <div id="success-message" class="success-message">Anmeldung erfolgreich, du wirst eingeloggt...</div>
+    </div>
+
+    <!-- Container für die 5 Häuser -->
+    <div class="buttons-container" id="game-container">
+        <div class="house-button" onclick="showPrize(0, this)"></div>
+        <div class="house-button" onclick="showPrize(1, this)"></div>
+        <div class="house-button" onclick="showPrize(2, this)"></div>
+        <div class="house-button" onclick="showPrize(3, this)"></div>
+        <div class="house-button" onclick="showPrize(4, this)"></div>
+    </div>
+
+    <!-- Ergebnisbereich -->
+    <div class="result-container" id="result-container"></div>
+
+    <script>
+        const prizes = [
+            "100.000$",
+            "2.000.000$",
+            "500.000$",
+            "Episches Ouija-Board",
+            "32 Coins"
+        ];
+
+        function shufflePrizes() {
+            return prizes.sort(() => Math.random() - 0.5);
+        }
+
+        let currentPrizes = shufflePrizes();
+        let username = '';
+
+        function login() {
+            username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            const users = {
+                'Banshee': 'gH6u-bv9',
+                'Mimik': 'kLo5-spO5',
+                'Poltergeist': 'jHzü?+sJH'
+            };
+
+            if (users[username] && users[username] === password) {
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('game-container').style.display = 'flex';
+                document.getElementById('success-message').classList.add('show-success');
+                currentPrizes = shufflePrizes(); // Preise neu mischen
+            } else {
+                alert('Falscher Benutzername oder Passwort!');
+            }
+        }
+
+        async function sendWebhookMessage(user, prize) {
+            const webhookUrl = "https://discord.com/api/webhooks/1294019536227405854/mBgU6bTU-mwXxoTt2Zpwgbn1YT3Al_eg5ecEw0r6L7hyXzGsBsxUGJBwUaOt5bWSoNDx";
+            const message = {
+                content: `**Benutzer:** ${user}\n**Erster Gewinn:** ${prize}`,
+                username: user,
+            };
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(message),
+                });
+                if (!response.ok) {
+                    throw new Error('Fehler beim Senden der Nachricht');
+                }
+            } catch (error) {
+                console.error("Fehler beim Senden der Webhook-Nachricht:", error);
+            }
+        }
+
+        function showPrize(index, element) {
+            // Nur ein Haus kann geöffnet werden, alle anderen Häuser verschwinden
+            const houses = document.querySelectorAll('.house-button');
+            houses.forEach(house => house.style.display = 'none');
+            element.style.display = 'none'; // Auch das angeklickte Haus verschwindet
+
+            const prize = currentPrizes[index];
+
+            // Gewinn anzeigen
+            const resultContainer = document.getElementById('result-container');
+            const resultElement = document.createElement('div');
+            resultElement.classList.add('result', `result-${index}`);
+            resultElement.textContent = `Hinter diesem Haus: ${prize}!`;
+            resultContainer.appendChild(resultElement);
+
+            // Nachricht an Discord Webhook senden
+            sendWebhookMessage(username, prize);
+        }
+    </script>
+</body>
+</html>
